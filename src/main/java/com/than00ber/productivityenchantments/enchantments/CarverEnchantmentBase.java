@@ -1,7 +1,5 @@
 package com.than00ber.productivityenchantments.enchantments;
 
-import com.than00ber.productivityenchantments.CarvedVolume;
-import com.than00ber.productivityenchantments.IValidatorCallback;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentType;
 import net.minecraft.inventory.EquipmentSlotType;

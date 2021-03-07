@@ -1,6 +1,6 @@
 package com.than00ber.productivityenchantments.enchantments.types;
 
-import com.than00ber.productivityenchantments.CarvedVolume;
+import com.than00ber.productivityenchantments.enchantments.CarvedVolume;
 import com.than00ber.productivityenchantments.enchantments.CarverEnchantmentBase;
 import com.than00ber.productivityenchantments.enchantments.IRightClickEffect;
 import net.minecraft.block.BlockState;

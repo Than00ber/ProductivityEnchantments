@@ -1,4 +1,4 @@
-package com.than00ber.productivityenchantments;
+package com.than00ber.productivityenchantments.enchantments;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
