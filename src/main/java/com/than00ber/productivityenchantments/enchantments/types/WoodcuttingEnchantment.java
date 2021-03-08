@@ -38,7 +38,7 @@ public class WoodcuttingEnchantment extends CarverEnchantmentBase {
                 .filterViaCallback(WOODCUTTING);
 
         if (isTreeLog) {
-            volume.filterBy(state);
+            volume.filterBy(state).filterConnectedRecursively(false);
         }
         else {
             IValidatorCallback callback = new IValidatorCallback() {
@@ -48,9 +48,9 @@ public class WoodcuttingEnchantment extends CarverEnchantmentBase {
                 }
             };
 
-            volume.filterViaCallback(callback);
+            volume.filterViaCallback(callback).filterConnectedRecursively();
         }
 
-        return volume.sortNearestToOrigin().filterConnectedRecursively().getVolume();
+        return volume.sortNearestToOrigin().getVolume();
     }
 }

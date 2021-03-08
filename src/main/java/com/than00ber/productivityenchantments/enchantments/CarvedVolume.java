@@ -87,8 +87,8 @@ public class CarvedVolume {
 
     /**
      * Filters through implemented validation callback.
-     * Make sure to call CarvedVolume#setToolRestrictionItem and
-     * CarvedVolume#setToolRestrictionType before performing filtering.
+     * Make sure to call CarvedVolume#setToolRestrictions
+     * before performing filtering.
      *
      * @param callback validation callback
      * @return instance
@@ -106,53 +106,51 @@ public class CarvedVolume {
     }
 
     public CarvedVolume filterConnectedRecursively() {
-        this.VOLUME = filterRecursively(this.ORIGIN, this.VOLUME, new HashSet<>());
+        this.VOLUME = filterRecursively(true, this.ORIGIN, this.VOLUME, new HashSet<>());
         return this;
     }
 
-    private Set<BlockPos> filterRecursively(BlockPos origin, Set<BlockPos> volume, Set<BlockPos> cluster) {
+    public CarvedVolume filterConnectedRecursively(boolean closestNeighbor) {
+        this.VOLUME = filterRecursively(closestNeighbor, this.ORIGIN, this.VOLUME, new HashSet<>());
+        return this;
+    }
+
+    private Set<BlockPos> filterRecursively(boolean closestNeighbor, BlockPos origin, Set<BlockPos> volume, Set<BlockPos> cluster) {
         cluster.add(origin);
 
         if (cluster.size() < volume.size() && cluster.size() < 2048) {
             Set<BlockPos> branch = new HashSet<>();
 
-            for (Direction direction : Direction.values()) {
-                BlockPos current = origin.offset(direction);
-                Block block = this.WORLD.getBlockState(current).getBlock();
+            if (closestNeighbor) {
 
-                if (!cluster.contains(current) && volume.contains(current) && block != Blocks.AIR)
-                    branch.add(current);
+                // only check for nearest neighboring blockpos
+                for (Direction direction : Direction.values()) {
+                    BlockPos current = origin.offset(direction);
+                    Block block = this.WORLD.getBlockState(current).getBlock();
+
+                    if (!cluster.contains(current) && volume.contains(current) && block != Blocks.AIR)
+                        branch.add(current);
+                }
+            }
+            else {
+
+                // check for all surrounding blockpos
+                for (int x = -1; x <= 1; x++) {
+
+                    for (int y = -1; y <= 1; y++) {
+
+                        for (int z = -1; z <= 1; z++) {
+                            BlockPos current = origin.add(x, y, z);
+                            Block block = this.WORLD.getBlockState(current).getBlock();
+
+                            if (!cluster.contains(current) && volume.contains(current) && block != Blocks.AIR)
+                                branch.add(current);
+                        }
+                    }
+                }
             }
 
-            branch.forEach(pos -> cluster.addAll(filterRecursively(pos, volume, cluster)));
-        }
-
-        return cluster;
-    }
-
-    @Deprecated
-    public CarvedVolume filterConnectedRecursively(BlockState... states) {
-        this.VOLUME = filterRecursivelyFromState(this.ORIGIN, this.VOLUME, new HashSet<>(), states);
-        return this;
-    }
-
-    @Deprecated
-    private Set<BlockPos> filterRecursivelyFromState(BlockPos origin, Set<BlockPos> volume, Set<BlockPos> cluster, BlockState... states) {
-        cluster.add(origin);
-
-        List<BlockState> valid = Arrays.asList(states);
-        if (cluster.size() < volume.size() && cluster.size() < 2048) {
-            Set<BlockPos> branch = new HashSet<>();
-
-            for (Direction direction : Direction.values()) {
-                BlockPos current = origin.offset(direction);
-                BlockState state = this.WORLD.getBlockState(current);
-
-                if (!cluster.contains(current) && volume.contains(current) && valid.contains(state))
-                    branch.add(current);
-            }
-
-            branch.forEach(pos -> cluster.addAll(filterRecursivelyFromState(pos, volume, cluster, states)));
+            branch.forEach(pos -> cluster.addAll(filterRecursively(closestNeighbor, pos, volume, cluster)));
         }
 
         return cluster;
