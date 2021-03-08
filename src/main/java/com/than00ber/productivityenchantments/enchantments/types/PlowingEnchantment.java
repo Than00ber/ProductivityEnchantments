@@ -1,5 +1,6 @@
 package com.than00ber.productivityenchantments.enchantments.types;
 
+import com.than00ber.productivityenchantments.Configs;
 import com.than00ber.productivityenchantments.enchantments.CarvedVolume;
 import com.than00ber.productivityenchantments.enchantments.CarverEnchantmentBase;
 import com.than00ber.productivityenchantments.enchantments.IRightClickEffect;
@@ -19,6 +20,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import static com.than00ber.productivityenchantments.Configs.PLOWING_CARVE_TYPE;
 import static com.than00ber.productivityenchantments.ProductivityEnchantments.RegistryEvents.PLOWING;
 
 public class PlowingEnchantment extends CarverEnchantmentBase implements IRightClickEffect {
@@ -54,9 +56,12 @@ public class PlowingEnchantment extends CarverEnchantmentBase implements IRightC
 
             CarvedVolume area = new CarvedVolume(CarvedVolume.Shape.DISC, radius, origin, world)
                     .setToolRestrictions(stack, PLOWING.getToolType())
-                    .filterViaCallback(PLOWING)
-                    .filterConnectedRecursively()
-                    .sortNearestToOrigin();
+                    .filterViaCallback(PLOWING);
+
+            if (PLOWING_CARVE_TYPE.get().equals(Configs.CarveType.CONNECTED))
+                area.filterConnectedRecursively();
+
+            area.sortNearestToOrigin();
 
             BlockState state = enchantment.getMaxLevel() == level
                     ? Blocks.FARMLAND.getDefaultState().with(FarmlandBlock.MOISTURE, Collections.max(FarmlandBlock.MOISTURE.getAllowedValues()))

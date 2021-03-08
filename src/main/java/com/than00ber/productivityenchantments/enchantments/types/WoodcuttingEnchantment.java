@@ -1,8 +1,9 @@
 package com.than00ber.productivityenchantments.enchantments.types;
 
+import com.than00ber.productivityenchantments.Configs;
 import com.than00ber.productivityenchantments.enchantments.CarvedVolume;
-import com.than00ber.productivityenchantments.enchantments.IValidatorCallback;
 import com.than00ber.productivityenchantments.enchantments.CarverEnchantmentBase;
+import com.than00ber.productivityenchantments.enchantments.IValidatorCallback;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.IGrowable;
 import net.minecraft.block.LeavesBlock;
@@ -14,6 +15,7 @@ import net.minecraftforge.common.ToolType;
 
 import java.util.Set;
 
+import static com.than00ber.productivityenchantments.Configs.WOODCUTTING_CARVE_TYPE;
 import static com.than00ber.productivityenchantments.ProductivityEnchantments.RegistryEvents.WOODCUTTING;
 
 public class WoodcuttingEnchantment extends CarverEnchantmentBase {
@@ -48,7 +50,10 @@ public class WoodcuttingEnchantment extends CarverEnchantmentBase {
                 }
             };
 
-            volume.filterViaCallback(callback).filterConnectedRecursively();
+            volume.filterViaCallback(callback);
+
+            if (WOODCUTTING_CARVE_TYPE.get().equals(Configs.CarveType.CONNECTED))
+                volume.filterConnectedRecursively();
         }
 
         return volume.sortNearestToOrigin().getVolume();

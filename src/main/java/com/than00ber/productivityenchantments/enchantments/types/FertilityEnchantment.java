@@ -1,9 +1,9 @@
 package com.than00ber.productivityenchantments.enchantments.types;
 
 import com.than00ber.productivityenchantments.enchantments.CarvedVolume;
-import com.than00ber.productivityenchantments.enchantments.IValidatorCallback;
 import com.than00ber.productivityenchantments.enchantments.CarverEnchantmentBase;
 import com.than00ber.productivityenchantments.enchantments.IRightClickEffect;
+import com.than00ber.productivityenchantments.enchantments.IValidatorCallback;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -14,6 +14,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
@@ -21,6 +22,8 @@ import net.minecraftforge.common.ToolType;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static com.than00ber.productivityenchantments.Configs.GROWING_SEEDS_DAMAGE_ITEM;
+import static com.than00ber.productivityenchantments.Configs.PLANTING_SEEDS_DAMAGE_ITEM;
 import static com.than00ber.productivityenchantments.ProductivityEnchantments.RegistryEvents.FERTILITY;
 
 public class FertilityEnchantment extends CarverEnchantmentBase implements IRightClickEffect {
@@ -96,6 +99,7 @@ public class FertilityEnchantment extends CarverEnchantmentBase implements IRigh
                     : inventory.getSlotFor(new ItemStack(Items.WHEAT_SEEDS));
             int quantityInInv = player.isCreative() ? surface.size() : inventory.getStackInSlot(inSlot).getCount();
             if (!player.isCreative()) inventory.decrStackSize(inSlot, surface.size());
+            player.swingArm(Hand.MAIN_HAND);
 
             if (block instanceof CropsBlock) {
 
@@ -105,8 +109,12 @@ public class FertilityEnchantment extends CarverEnchantmentBase implements IRigh
                         BlockPos blockPos = surface.get(i);
                         BlockState current = world.getBlockState(blockPos);
 
-                        if (current.getBlock() instanceof CropsBlock)
+                        if (current.getBlock() instanceof CropsBlock) {
                             ((CropsBlock) current.getBlock()).grow(world, blockPos, current);
+
+                            if (i % 2 == 0 && GROWING_SEEDS_DAMAGE_ITEM.get())
+                                heldItem.damageItem(1, player, p -> notBroken.set(false));
+                        }
                     }
                     else {
                         return;
@@ -121,7 +129,9 @@ public class FertilityEnchantment extends CarverEnchantmentBase implements IRigh
                     if (notBroken.get()) {
                         BlockPos blockPos = surface.get(i);
                         world.setBlockState(blockPos, seed);
-                        if (i % 2 == 0) heldItem.damageItem(1, player, p -> notBroken.set(false));
+
+                        if (i % 2 == 0 && PLANTING_SEEDS_DAMAGE_ITEM.get())
+                            heldItem.damageItem(1, player, p -> notBroken.set(false));
                     }
                     else {
                         return;

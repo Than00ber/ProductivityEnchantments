@@ -1,5 +1,6 @@
 package com.than00ber.productivityenchantments.enchantments.types;
 
+import com.than00ber.productivityenchantments.Configs;
 import com.than00ber.productivityenchantments.enchantments.CarvedVolume;
 import com.than00ber.productivityenchantments.enchantments.CarverEnchantmentBase;
 import net.minecraft.block.BlockState;
@@ -13,6 +14,7 @@ import net.minecraftforge.common.ToolType;
 import java.util.Collections;
 import java.util.Set;
 
+import static com.than00ber.productivityenchantments.Configs.CULTIVATION_CARVE_TYPE;
 import static com.than00ber.productivityenchantments.ProductivityEnchantments.RegistryEvents.CULTIVATION;
 
 public class CultivationEnchantment extends CarverEnchantmentBase {
@@ -39,9 +41,11 @@ public class CultivationEnchantment extends CarverEnchantmentBase {
 
         CarvedVolume volume = new CarvedVolume(CarvedVolume.Shape.DISC, radius, origin, world)
                 .setToolRestrictions(stack, CULTIVATION.getToolType())
-                .filterViaCallback(CULTIVATION)
-                .sortNearestToOrigin();
+                .filterViaCallback(CULTIVATION);
 
-        return volume.getVolume();
+        if (CULTIVATION_CARVE_TYPE.get().equals(Configs.CarveType.CONNECTED))
+            volume.filterConnectedRecursively();
+
+        return volume.sortNearestToOrigin().getVolume();
     }
 }

@@ -40,7 +40,6 @@ public class RightClickHandler {
                     CarverEnchantmentBase ceb = ((CarverEnchantmentBase) enchantment);
 
                     if (ceb.isBlockValid(world.getBlockState(pos), world, pos, heldItem, ceb.getToolType())) {
-                        player.swingArm(Hand.MAIN_HAND);
 
                         if (player instanceof ServerPlayerEntity) {
                             iRightClickEffect.onRightClick(heldItem, lvl, facing, ceb, world, pos, player);

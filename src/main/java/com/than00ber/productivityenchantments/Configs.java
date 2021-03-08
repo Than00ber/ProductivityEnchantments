@@ -4,43 +4,42 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Configs {
 
     public static ForgeConfigSpec CONFIG_SPEC;
     public static Configs CONFIGS;
 
-    // value ranges
-    public static ForgeConfigSpec.IntValue MAX_SNOW_DEPTH;
-    public static ForgeConfigSpec.IntValue SNOW_LIGHT_MELTING_THRESHOLD_BLOCK;
-    public static ForgeConfigSpec.IntValue SNOW_LIGHT_MELTING_THRESHOLD_SKY;
-    public static ForgeConfigSpec.DoubleValue SNOW_TICK_CHANCE;
-    public static ForgeConfigSpec.DoubleValue BIOME_TEMPERATURE_THRESHOLD;
-    public static ForgeConfigSpec.DoubleValue SNOW_DOWNFALL;
+    public static ForgeConfigSpec.BooleanValue PLANTING_SEEDS_DAMAGE_ITEM;
+    public static ForgeConfigSpec.BooleanValue GROWING_SEEDS_DAMAGE_ITEM;
+    public static ForgeConfigSpec.BooleanValue PLACING_TORCH_DAMAGE_ITEM;
 
-    // toggles
-    public static ForgeConfigSpec.BooleanValue ENTITY_AFFECT_SNOW;
-    public static ForgeConfigSpec.BooleanValue ITEM_AFFECT_SNOW;
-    public static ForgeConfigSpec.BooleanValue PRESERVE_FARMLAND;
-    public static ForgeConfigSpec.BooleanValue SNOW_UNDER_TREE;
-    public static ForgeConfigSpec.BooleanValue SNOW_BLOCKS_CAN_FALL;
-    public static ForgeConfigSpec.BooleanValue WATER_CAN_FREEZE;
+    public static ForgeConfigSpec.EnumValue<CarveType> WOODCUTTING_CARVE_TYPE;
+    public static ForgeConfigSpec.EnumValue<CarveType> DIGGING_CARVE_TYPE;
+    public static ForgeConfigSpec.EnumValue<CarveType> CULTIVATION_CARVE_TYPE;
+    public static ForgeConfigSpec.EnumValue<CarveType> PLOWING_CARVE_TYPE;
+    public static ForgeConfigSpec.EnumValue<CarveType> FERTILITY_CARVE_TYPE;
 
     public Configs(ForgeConfigSpec.Builder forgeConfigBuilder) {
         ConfigBuilder builder = new ConfigBuilder(forgeConfigBuilder);
 
-        SNOW_LIGHT_MELTING_THRESHOLD_BLOCK = builder.defineRange("snow_light_melting_threshold_block", 11, -1, 15);
-        SNOW_LIGHT_MELTING_THRESHOLD_SKY = builder.defineRange("snow_light_melting_threshold_sky", 11, -1, 15);
-        MAX_SNOW_DEPTH = builder.defineRange("max_snow_depth", 3, 0, 256);
-        SNOW_TICK_CHANCE = builder.defineRange("snow_tick_chance", 12.5, 1.0, 100.0);
-        BIOME_TEMPERATURE_THRESHOLD = builder.defineRange("biome_temperature_threshold", 0.2, 0.0, 2.0);
-        SNOW_DOWNFALL = builder.defineRange("snow_downfall", 1.0, 0.1, 1.0);
+        PLANTING_SEEDS_DAMAGE_ITEM = builder.defineBoolean("planting_seeds_damage_item", true);
+        GROWING_SEEDS_DAMAGE_ITEM = builder.defineBoolean("growing_seeds_damage_item", false);
+        PLACING_TORCH_DAMAGE_ITEM = builder.defineBoolean("placing_torch_damage_item", false);
 
-        ENTITY_AFFECT_SNOW = builder.defineBoolean("entity_affect_snow", true);
-        ITEM_AFFECT_SNOW = builder.defineBoolean("entity_affect_snow", true);
-        PRESERVE_FARMLAND = builder.defineBoolean("entity_affect_snow", true);
-        SNOW_UNDER_TREE = builder.defineBoolean("entity_affect_snow", true);
-        SNOW_BLOCKS_CAN_FALL = builder.defineBoolean("entity_affect_snow", true);
-        WATER_CAN_FREEZE = builder.defineBoolean("entity_affect_snow", true);
+        WOODCUTTING_CARVE_TYPE = builder.defineEnum("woodcutting_carve_type", CarveType.CONNECTED, CarveType.values());
+        DIGGING_CARVE_TYPE = builder.defineEnum("digging_carve_type", CarveType.CONNECTED, CarveType.values());
+        CULTIVATION_CARVE_TYPE = builder.defineEnum("cultivation_carve_type", CarveType.ALL, CarveType.values());
+        PLOWING_CARVE_TYPE = builder.defineEnum("plowing_carve_type", CarveType.CONNECTED, CarveType.values());
+        FERTILITY_CARVE_TYPE = builder.defineEnum("fertility_carve_type", CarveType.CONNECTED, CarveType.values());
+    }
+
+    static {
+        Pair<Configs, ForgeConfigSpec> pair = new ForgeConfigSpec.Builder().configure(Configs::new);
+        CONFIG_SPEC = pair.getRight();
+        CONFIGS = pair.getLeft();
     }
 
     private static class ConfigBuilder {
@@ -67,18 +66,30 @@ public class Configs {
             return BUILDER.comment(fromConfigKey(key), noteFromConfigKey(key)).defineEnum(key, defaultValue, enums);
         }
 
+        /**
+         * Gets translation component from registry as:
+         * config.<key>
+         *
+         * @param key registry key
+         * @return translation component
+         */
         private static String fromConfigKey(String key) {
             return new TranslationTextComponent("config." + key).getUnformattedComponentText();
         }
 
+        /**
+         * Gets translation component note from registry as
+         * config.<key>.note
+         *
+         * @param key registry key
+         * @return translation component
+         */
         private static String noteFromConfigKey(String key) {
             return fromConfigKey("prefix.note") + ": " + fromConfigKey(key + ".note");
         }
     }
 
-    static {
-        Pair<Configs, ForgeConfigSpec> pair = new ForgeConfigSpec.Builder().configure(Configs::new);
-        CONFIG_SPEC = pair.getRight();
-        CONFIGS = pair.getLeft();
+    public enum CarveType {
+        CONNECTED, ALL
     }
 }

@@ -9,7 +9,9 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 
 @Mod(ProductivityEnchantments.MODID)
@@ -18,6 +20,7 @@ public class ProductivityEnchantments {
     public static final String MODID = "productivityenchantments";
 
     public ProductivityEnchantments() {
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Configs.CONFIG_SPEC);
         MinecraftForge.EVENT_BUS.register(this);
     }
 

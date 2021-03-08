@@ -1,8 +1,9 @@
 package com.than00ber.productivityenchantments.enchantments.types;
 
+import com.than00ber.productivityenchantments.Configs;
 import com.than00ber.productivityenchantments.enchantments.CarvedVolume;
-import com.than00ber.productivityenchantments.enchantments.IValidatorCallback;
 import com.than00ber.productivityenchantments.enchantments.CarverEnchantmentBase;
+import com.than00ber.productivityenchantments.enchantments.IValidatorCallback;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.OreBlock;
 import net.minecraft.enchantment.Enchantment;
@@ -16,6 +17,7 @@ import net.minecraftforge.common.ToolType;
 
 import java.util.Set;
 
+import static com.than00ber.productivityenchantments.Configs.DIGGING_CARVE_TYPE;
 import static com.than00ber.productivityenchantments.ProductivityEnchantments.RegistryEvents.CLUSTER;
 import static com.than00ber.productivityenchantments.ProductivityEnchantments.RegistryEvents.DIGGING;
 
@@ -61,11 +63,13 @@ public class DiggingEnchantment extends CarverEnchantmentBase {
             };
         }
 
-        return new CarvedVolume(CarvedVolume.Shape.SPHERICAL, radius, origin, world)
+        CarvedVolume area = new CarvedVolume(CarvedVolume.Shape.SPHERICAL, radius, origin, world)
                 .setToolRestrictions(stack, enchantment.getToolType())
-                .filterViaCallback(callback)
-                .filterConnectedRecursively()
-                .sortNearestToOrigin()
-                .getVolume();
+                .filterViaCallback(callback);
+
+        if (DIGGING_CARVE_TYPE.get().equals(Configs.CarveType.CONNECTED))
+            area.filterConnectedRecursively();
+
+        return area.sortNearestToOrigin().getVolume();
     }
 }

@@ -18,6 +18,8 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import static com.than00ber.productivityenchantments.Configs.PLACING_TORCH_DAMAGE_ITEM;
+
 public class TorchingEnchantment extends Enchantment implements IRightClickEffect {
 
     public TorchingEnchantment() {
@@ -64,6 +66,9 @@ public class TorchingEnchantment extends Enchantment implements IRightClickEffec
                         if (!player.isCreative()) {
                             int inSlot = inventory.getSlotFor(new ItemStack(Items.TORCH));
                             inventory.decrStackSize(inSlot, 1);
+
+                            if (world.rand.nextInt(2) == 0 && PLACING_TORCH_DAMAGE_ITEM.get())
+                                stack.damageItem(1, player, p -> {});
                         }
                     }
                 }

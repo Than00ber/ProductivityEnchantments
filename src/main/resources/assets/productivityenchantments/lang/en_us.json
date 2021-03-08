@@ -1,11 +1,21 @@
 {
+  "enchantment.productivityenchantments.woodcutting": "Woodcutting",
   "enchantment.productivityenchantments.cluster": "Cluster",
   "enchantment.productivityenchantments.digging": "Digging",
-  "enchantment.productivityenchantments.woodcutting": "Woodcutting",
-  "enchantment.productivityenchantments.plowing": "Plowing",
   "enchantment.productivityenchantments.cultivation": "Cultivation",
+  "enchantment.productivityenchantments.plowing": "Plowing",
   "enchantment.productivityenchantments.fertility": "Fertility",
   "enchantment.productivityenchantments.magnetism": "Magnetism",
   "enchantment.productivityenchantments.torching": "Torching",
-  "enchantment.productivityenchantments.chunk": "Chunk"
+  "config.prefix.note": "Note",
+  "config.woodcutting_carve_type": "Change whether Woodcutting breaks all blocks within effective radius or only those connected.",
+  "config.woodcutting_carve_type.note": "This does not apply to log-type blocks",
+  "config.digging_carve_type": "Change whether Digging breaks all blocks within effective radius or only those connected.",
+  "config.cultivation_carve_type": "Change whether Cultivation breaks all blocks within effective radius or only those connected.",
+  "config.cultivation_carve_type.note": "Only breaks fully grown crops",
+  "config.plowing_carve_type": "Change whether Cultivation turns all dirt blocks into farmland within effective radius or only those connected.",
+  "config.fertility_carve_type": "Change whether Fertility plants seeds within connected farmland or all within effective radius.",
+  "config.planting_seeds_damage_item": "Determines whether hoe takes 1/2 damage when planting seeds with Fertility.",
+  "config.growing_seeds_damage_item": "Determines whether hoe takes 1/2 damage when attempting to grow crops.",
+  "placing_torch_damage_item": "Determines whether placing torches deals 1/2 damage to the item. Default is False."
 }
