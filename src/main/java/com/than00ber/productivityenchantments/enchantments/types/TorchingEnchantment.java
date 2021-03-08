@@ -34,26 +34,24 @@ public class TorchingEnchantment extends Enchantment implements IRightClickEffec
     @Override
     public void onRightClick(ItemStack stack, int level, Direction facing, World world, BlockPos origin, PlayerEntity player) {
 
+        System.out.println(facing);
+
         if (player.isSneaking() || player.isCrouching()) {
             PlayerInventory inventory = player.inventory;
 
             if (inventory.hasItemStack(new ItemStack(Items.TORCH)) || player.isCreative()) {
                 BlockPos current = origin.offset(facing);
-                Block block = world.getBlockState(current).getBlock();
+                BlockState state = world.getBlockState(current);
+                boolean upDown = facing.equals(Direction.UP) || facing.equals(Direction.DOWN);
 
-                if (block == Blocks.AIR) {
-                    BlockState state = world.getBlockState(current);
-
-                    Direction direction = facing.equals(Direction.DOWN) || facing.equals(Direction.UP)
-                            ? player.getHorizontalFacing().getOpposite() : facing;
-
+                if (state.getBlock() == Blocks.AIR) {
                     BlockState torch = null;
 
-                    if (Blocks.TORCH.isValidPosition(state, world, current)) {
+                    if (Blocks.TORCH.isValidPosition(state, world, current) && upDown) {
                         torch = Blocks.TORCH.getDefaultState();
                     }
-                    else {
-                        BlockState wallTorch = Blocks.WALL_TORCH.getDefaultState().with(WallTorchBlock.HORIZONTAL_FACING, direction);
+                    else if (!upDown) {
+                        BlockState wallTorch = Blocks.WALL_TORCH.getDefaultState().with(WallTorchBlock.HORIZONTAL_FACING, facing);
 
                         if (Blocks.WALL_TORCH.isValidPosition(wallTorch, world, current))
                             torch = wallTorch;
