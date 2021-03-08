@@ -34,8 +34,6 @@ public class TorchingEnchantment extends Enchantment implements IRightClickEffec
     @Override
     public void onRightClick(ItemStack stack, int level, Direction facing, World world, BlockPos origin, PlayerEntity player) {
 
-        System.out.println(facing);
-
         if (player.isSneaking() || player.isCrouching()) {
             PlayerInventory inventory = player.inventory;
 
