@@ -19,8 +19,6 @@ import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.ToolType;
 
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 import static com.than00ber.productivityenchantments.Configs.PLOWING_CARVE_TYPE;
 import static com.than00ber.productivityenchantments.ProductivityEnchantments.RegistryEvents.PLOWING;
@@ -41,13 +39,6 @@ public class PlowingEnchantment extends CarverEnchantmentBase implements IRightC
     @Override
     public boolean isBlockValid(BlockState state, World world, BlockPos pos, ItemStack stack, ToolType type) {
         return state.isIn(Tags.Blocks.DIRT) && world.getBlockState(pos.up()).getBlock() == Blocks.AIR;
-    }
-
-    @Override
-    public Set<BlockPos> getRemoveVolume(ItemStack stack, int level, CarverEnchantmentBase enchantment, World world, BlockPos origin) {
-        Set<BlockPos> block = new HashSet<>();
-        block.add(origin);
-        return block;
     }
 
     @Override

@@ -8,6 +8,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class CarverEnchantmentBase extends Enchantment implements IValidatorCallback {
@@ -43,11 +44,8 @@ public class CarverEnchantmentBase extends Enchantment implements IValidatorCall
     }
 
     public Set<BlockPos> getRemoveVolume(ItemStack stack, int level, CarverEnchantmentBase enchantment, World world, BlockPos origin) {
-        int radius = enchantment.getMaxEffectiveRadius(level);
-        return new CarvedVolume(CarvedVolume.Shape.SPHERICAL, radius, origin, world)
-                .setToolRestrictions(stack, enchantment.getToolType())
-                .filterConnectedRecursively()
-                .sortNearestToOrigin()
-                .getVolume();
+        Set<BlockPos> block = new HashSet<>();
+        block.add(origin);
+        return block;
     }
 }

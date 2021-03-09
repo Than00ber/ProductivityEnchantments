@@ -5,7 +5,6 @@ import com.than00ber.productivityenchantments.enchantments.CarverEnchantmentBase
 import com.than00ber.productivityenchantments.enchantments.IRightClickEffect;
 import com.than00ber.productivityenchantments.enchantments.IValidatorCallback;
 import net.minecraft.block.*;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -22,7 +21,10 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.than00ber.productivityenchantments.Configs.GROWING_CROPS_DAMAGE_ITEM;
@@ -50,13 +52,6 @@ public class FertilityEnchantment extends CarverEnchantmentBase implements IRigh
                     : !state.get(CropsBlock.AGE).equals(Collections.max(CropsBlock.AGE.getAllowedValues()));
         }
         return (state.getBlock() == Blocks.FARMLAND && world.getBlockState(pos.up()).getBlock() == Blocks.AIR);
-    }
-
-    @Override
-    public Set<BlockPos> getRemoveVolume(ItemStack stack, int level, CarverEnchantmentBase enchantment, World world, BlockPos origin) {
-        Set<BlockPos> block = new HashSet<>();
-        block.add(origin);
-        return block;
     }
 
     @Override
