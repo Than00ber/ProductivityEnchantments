@@ -5,9 +5,9 @@ import com.than00ber.productivityenchantments.enchantments.IRightClickEffect;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -30,7 +30,8 @@ public class RightClickHandler {
             if (hasPerformedCarvingAction) return;
 
             if (enchantment instanceof IRightClickEffect) {
-                IRightClickEffect iRightClickEffect = (IRightClickEffect) enchantment;
+                IRightClickEffect rce = (IRightClickEffect) enchantment;
+                ActionResultType actionResult = ActionResultType.PASS;
                 int lvl = enchantments.get(enchantment);
                 BlockPos pos = event.getPos();
                 World world = event.getWorld();
@@ -39,16 +40,16 @@ public class RightClickHandler {
                 if (enchantment instanceof CarverEnchantmentBase) {
                     CarverEnchantmentBase ceb = ((CarverEnchantmentBase) enchantment);
 
-                    if (ceb.isBlockValid(world.getBlockState(pos), world, pos, heldItem, ceb.getToolType())) {
-
-                        if (player instanceof ServerPlayerEntity) {
-                            iRightClickEffect.onRightClick(heldItem, lvl, facing, ceb, world, pos, player);
-                            hasPerformedCarvingAction = true;
-                        }
-                    }
+                    if (ceb.isBlockValid(world.getBlockState(pos), world, pos, heldItem, ceb.getToolType()))
+                        actionResult = rce.onRightClick(heldItem, lvl, facing, ceb, world, pos, player);
                 }
                 else {
-                    iRightClickEffect.onRightClick(heldItem, lvl, facing, world, pos, player);
+                    actionResult = rce.onRightClick(heldItem, lvl, facing, world, pos, player);
+                }
+
+                if (actionResult == ActionResultType.SUCCESS) {
+                    hasPerformedCarvingAction = true;
+                    player.swingArm(Hand.MAIN_HAND);
                 }
             }
         }
