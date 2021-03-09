@@ -17,6 +17,7 @@ public class MagnetismEnchantment extends Enchantment {
         return item instanceof PickaxeItem
                 || item instanceof ShovelItem
                 || item instanceof SwordItem
+                || item instanceof AxeItem
                 || item instanceof BowItem
                 || item instanceof CrossbowItem;
     }
