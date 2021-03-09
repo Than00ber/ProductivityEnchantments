@@ -1,7 +1,6 @@
 package com.than00ber.productivityenchantments.enchantments.types;
 
 import com.than00ber.productivityenchantments.enchantments.IRightClickEffect;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.WallTorchBlock;
@@ -13,6 +12,7 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.PickaxeItem;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -32,7 +32,7 @@ public class TorchingEnchantment extends Enchantment implements IRightClickEffec
     }
 
     @Override
-    public void onRightClick(ItemStack stack, int level, Direction facing, World world, BlockPos origin, PlayerEntity player) {
+    public ActionResultType onRightClick(ItemStack stack, int level, Direction facing, World world, BlockPos origin, PlayerEntity player) {
 
         if (player.isSneaking() || player.isCrouching()) {
             PlayerInventory inventory = player.inventory;
@@ -66,9 +66,13 @@ public class TorchingEnchantment extends Enchantment implements IRightClickEffec
                             if (world.rand.nextInt(2) == 0 && PLACING_TORCH_DAMAGE_ITEM.get())
                                 stack.damageItem(1, player, p -> {});
                         }
+
+                        return ActionResultType.SUCCESS;
                     }
                 }
             }
         }
+
+        return ActionResultType.PASS;
     }
 }

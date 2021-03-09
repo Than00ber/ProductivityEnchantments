@@ -48,7 +48,7 @@ public class ClusterEnchantment extends CarverEnchantmentBase {
         BlockState ore = world.getBlockState(origin);
 
         return new CarvedVolume(CarvedVolume.Shape.SPHERICAL, radius, origin, world)
-                .setToolRestrictions(stack, enchantment.getToolType())
+                .setToolRestrictions(stack, CLUSTER.getToolType())
                 .filterViaCallback(CLUSTER)
                 .filterBy(ore)
                 .filterConnectedRecursively()

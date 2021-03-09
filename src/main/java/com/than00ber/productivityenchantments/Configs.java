@@ -4,16 +4,13 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Configs {
 
     public static ForgeConfigSpec CONFIG_SPEC;
     public static Configs CONFIGS;
 
     public static ForgeConfigSpec.BooleanValue PLANTING_SEEDS_DAMAGE_ITEM;
-    public static ForgeConfigSpec.BooleanValue GROWING_SEEDS_DAMAGE_ITEM;
+    public static ForgeConfigSpec.BooleanValue GROWING_CROPS_DAMAGE_ITEM;
     public static ForgeConfigSpec.BooleanValue PLACING_TORCH_DAMAGE_ITEM;
 
     public static ForgeConfigSpec.EnumValue<CarveType> WOODCUTTING_CARVE_TYPE;
@@ -26,7 +23,7 @@ public class Configs {
         ConfigBuilder builder = new ConfigBuilder(forgeConfigBuilder);
 
         PLANTING_SEEDS_DAMAGE_ITEM = builder.defineBoolean("planting_seeds_damage_item", true);
-        GROWING_SEEDS_DAMAGE_ITEM = builder.defineBoolean("growing_seeds_damage_item", false);
+        GROWING_CROPS_DAMAGE_ITEM = builder.defineBoolean("growing_seeds_damage_item", false);
         PLACING_TORCH_DAMAGE_ITEM = builder.defineBoolean("placing_torch_damage_item", false);
 
         WOODCUTTING_CARVE_TYPE = builder.defineEnum("woodcutting_carve_type", CarveType.CONNECTED, CarveType.values());

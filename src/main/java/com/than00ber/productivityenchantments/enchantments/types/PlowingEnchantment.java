@@ -9,7 +9,9 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.FarmlandBlock;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -49,25 +51,30 @@ public class PlowingEnchantment extends CarverEnchantmentBase implements IRightC
     }
 
     @Override
-    public void onRightClick(ItemStack stack, int level, Direction facing, CarverEnchantmentBase enchantment, World world, BlockPos origin, PlayerEntity player) {
+    public ActionResultType onRightClick(ItemStack stack, int level, Direction facing, CarverEnchantmentBase enchantment, World world, BlockPos origin, PlayerEntity player) {
 
-        if (!player.isSneaking() || !player.isCrouching()) {
-            int radius = enchantment.getMaxEffectiveRadius(level);
+        if (player instanceof ServerPlayerEntity) {
 
-            CarvedVolume area = new CarvedVolume(CarvedVolume.Shape.DISC, radius, origin, world)
-                    .setToolRestrictions(stack, PLOWING.getToolType())
-                    .filterViaCallback(PLOWING);
+            if (!player.isSneaking() || !player.isCrouching()) {
+                int radius = enchantment.getMaxEffectiveRadius(level);
 
-            if (PLOWING_CARVE_TYPE.get().equals(Configs.CarveType.CONNECTED))
-                area.filterConnectedRecursively();
+                CarvedVolume area = new CarvedVolume(CarvedVolume.Shape.DISC, radius, origin, world)
+                        .setToolRestrictions(stack, PLOWING.getToolType())
+                        .filterViaCallback(PLOWING);
 
-            area.sortNearestToOrigin();
+                if (PLOWING_CARVE_TYPE.get().equals(Configs.CarveType.CONNECTED))
+                    area.filterConnectedRecursively();
 
-            BlockState state = enchantment.getMaxLevel() == level
-                    ? Blocks.FARMLAND.getDefaultState().with(FarmlandBlock.MOISTURE, Collections.max(FarmlandBlock.MOISTURE.getAllowedValues()))
-                    : Blocks.FARMLAND.getDefaultState();
+                area.sortNearestToOrigin();
 
-            this.performPlacements(world, player, stack, area.getVolume(), state);
+                BlockState state = enchantment.getMaxLevel() == level
+                        ? Blocks.FARMLAND.getDefaultState().with(FarmlandBlock.MOISTURE, Collections.max(FarmlandBlock.MOISTURE.getAllowedValues()))
+                        : Blocks.FARMLAND.getDefaultState();
+
+                return this.performPlacements(world, player, stack, area.getVolume(), state);
+            }
         }
+
+        return ActionResultType.PASS;
     }
 }

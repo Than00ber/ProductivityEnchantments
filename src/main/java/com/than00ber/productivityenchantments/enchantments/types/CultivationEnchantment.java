@@ -41,7 +41,8 @@ public class CultivationEnchantment extends CarverEnchantmentBase {
 
         CarvedVolume volume = new CarvedVolume(CarvedVolume.Shape.DISC, radius, origin, world)
                 .setToolRestrictions(stack, CULTIVATION.getToolType())
-                .filterViaCallback(CULTIVATION);
+                .filterViaCallback(CULTIVATION)
+                .filterBy(world.getBlockState(origin));
 
         if (CULTIVATION_CARVE_TYPE.get().equals(Configs.CarveType.CONNECTED))
             volume.filterConnectedRecursively();
