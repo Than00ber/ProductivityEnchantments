@@ -71,9 +71,7 @@ public class PlowingEnchantment extends CarverEnchantmentBase implements IRightC
                         Block above = world.getBlockState(blockPos.up()).getBlock();
                         stack.damageItem(1, player, p -> notBroken.set(false));
 
-                        if (above instanceof TallGrassBlock)
-                            world.setBlockState(blockPos.up(), Blocks.AIR.getDefaultState());
-                        else if (above instanceof DoublePlantBlock)
+                        if (above instanceof TallGrassBlock || above instanceof DoublePlantBlock)
                             world.setBlockState(blockPos.up(), Blocks.AIR.getDefaultState());
                     }
                     else {
