@@ -28,7 +28,7 @@ public class DiggingEnchantment extends CarverEnchantmentBase {
     }
 
     @Override
-    public boolean canApplyTogether(Enchantment enchantment) {
+    public boolean canApplyTogether(@SuppressWarnings("NullableProblems") Enchantment enchantment) {
         return super.canApplyTogether(enchantment) || enchantment instanceof ClusterEnchantment;
     }
 
