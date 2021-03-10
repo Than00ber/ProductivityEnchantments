@@ -42,8 +42,7 @@ public class ChunkEnchantment extends Enchantment implements IRightClickEffect {
                     ? ((BlockItem) stack.getItem()).getBlock().getDefaultState()
                     : Blocks.DIRT.getBlock().getDefaultState();
 
-            CarvedVolume volume = new CarvedVolume(CarvedVolume.Shape.DISC, radius, origin, world)
-                    .rotate(Math.PI / 2, facing);
+            CarvedVolume volume = new CarvedVolume(CarvedVolume.Shape.DISC, radius, origin, world);
             for (BlockPos pos : volume.getVolume()) world.setBlockState(pos, state);
 
             return ActionResultType.SUCCESS;
