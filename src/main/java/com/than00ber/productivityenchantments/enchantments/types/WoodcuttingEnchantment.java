@@ -33,28 +33,15 @@ public class WoodcuttingEnchantment extends CarverEnchantmentBase {
     public Set<BlockPos> getRemoveVolume(ItemStack stack, int level, CarverEnchantmentBase enchantment, World world, BlockPos origin) {
         BlockState state = world.getBlockState(origin);
         boolean isTreeLog = state.getBlock() instanceof RotatedPillarBlock;
-        int radius = isTreeLog ? 32 : enchantment.getMaxEffectiveRadius(level);
+        int radius = isTreeLog ? (int) (4 + Math.pow(5, level - 1)) : enchantment.getMaxEffectiveRadius(level);
 
         CarvedVolume volume = new CarvedVolume(CarvedVolume.Shape.SPHERICAL, radius, origin, world)
                 .setToolRestrictions(stack, WOODCUTTING.getToolType())
                 .filterViaCallback(WOODCUTTING);
 
-        if (isTreeLog) {
-            volume.filterBy(state).filterConnectedRecursively(false);
-        }
-        else {
-            IValidatorCallback callback = new IValidatorCallback() {
-                @Override
-                public boolean isBlockValid(BlockState state, World world, BlockPos pos, ItemStack stack, ToolType type) {
-                    return !(state.getBlock() instanceof RotatedPillarBlock);
-                }
-            };
-
-            volume.filterViaCallback(callback);
-
-            if (WOODCUTTING_CARVE_TYPE.get().equals(Configs.CarveType.CONNECTED))
-                volume.filterConnectedRecursively();
-        }
+        if (isTreeLog) volume.filterBy(state).filterConnectedRecursively(false);
+        else if (WOODCUTTING_CARVE_TYPE.get().equals(Configs.CarveType.CONNECTED))
+            volume.filterConnectedRecursively();
 
         return volume.sortNearestToOrigin().getVolume();
     }
