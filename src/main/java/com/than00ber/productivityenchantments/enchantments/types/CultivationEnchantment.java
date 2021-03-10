@@ -20,7 +20,7 @@ import static com.than00ber.productivityenchantments.ProductivityEnchantments.Re
 public class CultivationEnchantment extends CarverEnchantmentBase {
 
     public CultivationEnchantment() {
-        super(Rarity.RARE, ToolType.HOE);
+        super(Rarity.UNCOMMON, ToolType.HOE);
     }
 
     @Override
