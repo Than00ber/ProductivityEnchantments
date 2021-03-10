@@ -21,7 +21,7 @@ public class CarverEnchantmentBase extends Enchantment implements IValidatorCall
     }
 
     @Override
-    public boolean canApplyTogether(Enchantment enchantment) {
+    public boolean canApplyTogether(@SuppressWarnings("NullableProblems") Enchantment enchantment) {
         return super.canApplyTogether(enchantment) && !(enchantment instanceof CarverEnchantmentBase);
     }
 

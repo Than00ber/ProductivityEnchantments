@@ -26,6 +26,7 @@ public class TorchingEnchantment extends Enchantment implements IRightClickEffec
         super(Rarity.UNCOMMON, EnchantmentType.DIGGER, new EquipmentSlotType[] { EquipmentSlotType.MAINHAND });
     }
 
+    @SuppressWarnings("NullableProblems")
     @Override
     public boolean canApply(ItemStack stack) {
         return super.canApply(stack) && stack.getItem() instanceof PickaxeItem;

@@ -59,7 +59,8 @@ public class Configs {
             return BUILDER.comment(fromConfigKey(key), noteFromConfigKey(key)).defineInRange(key, defaultValue, min, max);
         }
 
-        public <V extends Enum<V>> ForgeConfigSpec.EnumValue<V> defineEnum(String key, V defaultValue, V... enums) {
+        @SafeVarargs
+        public final <V extends Enum<V>> ForgeConfigSpec.EnumValue<V> defineEnum(String key, V defaultValue, V... enums) {
             return BUILDER.comment(fromConfigKey(key), noteFromConfigKey(key)).defineEnum(key, defaultValue, enums);
         }
 
