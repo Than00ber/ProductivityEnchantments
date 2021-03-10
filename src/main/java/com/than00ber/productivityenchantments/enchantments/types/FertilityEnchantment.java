@@ -38,7 +38,7 @@ public class FertilityEnchantment extends CarverEnchantmentBase implements IRigh
     }
 
     @Override
-    public boolean canApplyTogether(Enchantment enchantment) {
+    public boolean canApplyTogether(@SuppressWarnings("NullableProblems") Enchantment enchantment) {
         if (enchantment instanceof CarverEnchantmentBase)
             return ((CarverEnchantmentBase) enchantment).getToolType().equals(ToolType.HOE);
         return super.canApplyTogether(enchantment);
@@ -46,12 +46,7 @@ public class FertilityEnchantment extends CarverEnchantmentBase implements IRigh
 
     @Override
     public boolean isBlockValid(BlockState state, World world, BlockPos pos, ItemStack stack, ToolType type) {
-        if (state.getBlock() instanceof CropsBlock) {
-            return state.getBlock() instanceof BeetrootBlock
-                    ? !state.get(BeetrootBlock.BEETROOT_AGE).equals(Collections.max(BeetrootBlock.BEETROOT_AGE.getAllowedValues()))
-                    : !state.get(CropsBlock.AGE).equals(Collections.max(CropsBlock.AGE.getAllowedValues()));
-        }
-        return (state.getBlock() == Blocks.FARMLAND && world.getBlockState(pos.up()).getBlock() == Blocks.AIR);
+        return (state.getBlock() == Blocks.FARMLAND && world.getBlockState(pos.up()).getBlock() == Blocks.AIR) || state.getBlock() instanceof CropsBlock;
     }
 
     @Override
@@ -74,7 +69,9 @@ public class FertilityEnchantment extends CarverEnchantmentBase implements IRigh
                 callback = new IValidatorCallback() {
                     @Override
                     public boolean isBlockValid(BlockState state, World world, BlockPos pos, ItemStack stack, ToolType type) {
+
                         if (state.getBlock() instanceof CropsBlock) {
+
                             return state.getBlock() instanceof BeetrootBlock
                                     ? state.get(BeetrootBlock.BEETROOT_AGE) < Collections.max(BeetrootBlock.BEETROOT_AGE.getAllowedValues())
                                     : state.get(CropsBlock.AGE) < Collections.max(CropsBlock.AGE.getAllowedValues());

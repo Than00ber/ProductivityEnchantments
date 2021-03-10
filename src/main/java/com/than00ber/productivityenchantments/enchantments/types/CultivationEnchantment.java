@@ -24,7 +24,7 @@ public class CultivationEnchantment extends CarverEnchantmentBase {
     }
 
     @Override
-    public boolean canApplyTogether(Enchantment enchantment) {
+    public boolean canApplyTogether(@SuppressWarnings("NullableProblems") Enchantment enchantment) {
         if (enchantment instanceof CarverEnchantmentBase)
             return ((CarverEnchantmentBase) enchantment).getToolType().equals(ToolType.HOE);
         return super.canApplyTogether(enchantment);
