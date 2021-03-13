@@ -34,7 +34,6 @@ public class ProductivityEnchantments {
     @Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.MOD)
     public static class RegistryEvents {
 
-        public static final ChunkEnchantment CHUNK = new ChunkEnchantment();
         public static final CarverEnchantmentBase WOODCUTTING = new WoodcuttingEnchantment();
         public static final CarverEnchantmentBase CLUSTER = new ClusterEnchantment();
         public static final CarverEnchantmentBase DIGGING = new DiggingEnchantment();
@@ -47,7 +46,6 @@ public class ProductivityEnchantments {
         @SubscribeEvent
         public static void onEnchantmentRegistry(final RegistryEvent.Register<Enchantment> event) {
             event.getRegistry().registerAll(
-                    CHUNK.setRegistryName(MODID, "chunk"),
                     WOODCUTTING.setRegistryName(MODID, "woodcutting"),
                     CLUSTER.setRegistryName(MODID, "cluster"),
                     DIGGING.setRegistryName(MODID, "digging"),
