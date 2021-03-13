@@ -8,9 +8,9 @@ issueTrackerURL="https://github.com/Than00ber/ProductivityEnchantments/issues" #
 modId="productivityenchantments" #mandatory
 version="${file.jarVersion}" #mandatory
 displayName="Productivity Enchantments Mod" #mandatory
-#displayURL="http://example.com/" #optional
+displayURL="https://www.curseforge.com/minecraft/mc-mods/productivity-enchantments" #optional
 logoFile="productivityenchantments.png" #optional
-credits="Forge maintainer, Sushiz" #optional
+credits="Sushiz" #optional
 authors="Than00ber" #optional
 description='''
     As the title suggests, this mod adds 8 vanilla-like enchantments aiming at increasing your productivity by helping you complete tedious tasks like farming, mining and even terraforming while being as balanced as possible to fit the game's theme.
