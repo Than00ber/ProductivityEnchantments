@@ -9,9 +9,7 @@ import net.minecraft.enchantment.EnchantmentType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.PickaxeItem;
+import net.minecraft.item.*;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
@@ -28,47 +26,49 @@ public class TorchingEnchantment extends Enchantment implements IRightClickEffec
 
     @Override
     public boolean canApply(@SuppressWarnings("NullableProblems") ItemStack stack) {
-        return super.canApply(stack) && stack.getItem() instanceof PickaxeItem;
+        return super.canApply(stack)
+                || (
+                        stack.getItem() instanceof PickaxeItem ||
+                        stack.getItem() instanceof AxeItem ||
+                        stack.getItem() instanceof SwordItem
+                );
     }
 
     @Override
     public ActionResultType onRightClick(ItemStack stack, int level, Direction facing, World world, BlockPos origin, PlayerEntity player) {
+        PlayerInventory inventory = player.inventory;
 
-        if (player.isSneaking() || player.isCrouching()) {
-            PlayerInventory inventory = player.inventory;
+        if (inventory.hasItemStack(new ItemStack(Items.TORCH)) || player.isCreative()) {
+            BlockPos current = origin.offset(facing);
+            BlockState state = world.getBlockState(current);
+            boolean upDown = facing.equals(Direction.UP) || facing.equals(Direction.DOWN);
 
-            if (inventory.hasItemStack(new ItemStack(Items.TORCH)) || player.isCreative()) {
-                BlockPos current = origin.offset(facing);
-                BlockState state = world.getBlockState(current);
-                boolean upDown = facing.equals(Direction.UP) || facing.equals(Direction.DOWN);
+            if (state.getBlock() == Blocks.AIR) {
+                BlockState torch = null;
 
-                if (state.getBlock() == Blocks.AIR) {
-                    BlockState torch = null;
+                if (Blocks.TORCH.isValidPosition(state, world, current) && upDown) {
+                    torch = Blocks.TORCH.getDefaultState();
+                }
+                else if (!upDown) {
+                    BlockState wallTorch = Blocks.WALL_TORCH.getDefaultState().with(WallTorchBlock.HORIZONTAL_FACING, facing);
 
-                    if (Blocks.TORCH.isValidPosition(state, world, current) && upDown) {
-                        torch = Blocks.TORCH.getDefaultState();
+                    if (Blocks.WALL_TORCH.isValidPosition(wallTorch, world, current))
+                        torch = wallTorch;
+                }
+
+                if (torch != null) {
+                    player.swingArm(Hand.MAIN_HAND);
+                    world.setBlockState(current, torch);
+
+                    if (!player.isCreative()) {
+                        int inSlot = inventory.getSlotFor(new ItemStack(Items.TORCH));
+                        inventory.decrStackSize(inSlot, 1);
+
+                        if (world.rand.nextInt(2) == 0 && PLACING_TORCH_DAMAGE_ITEM.get())
+                            stack.damageItem(1, player, p -> {});
                     }
-                    else if (!upDown) {
-                        BlockState wallTorch = Blocks.WALL_TORCH.getDefaultState().with(WallTorchBlock.HORIZONTAL_FACING, facing);
 
-                        if (Blocks.WALL_TORCH.isValidPosition(wallTorch, world, current))
-                            torch = wallTorch;
-                    }
-
-                    if (torch != null) {
-                        player.swingArm(Hand.MAIN_HAND);
-                        world.setBlockState(current, torch);
-
-                        if (!player.isCreative()) {
-                            int inSlot = inventory.getSlotFor(new ItemStack(Items.TORCH));
-                            inventory.decrStackSize(inSlot, 1);
-
-                            if (world.rand.nextInt(2) == 0 && PLACING_TORCH_DAMAGE_ITEM.get())
-                                stack.damageItem(1, player, p -> {});
-                        }
-
-                        return ActionResultType.SUCCESS;
-                    }
+                    return ActionResultType.SUCCESS;
                 }
             }
         }
