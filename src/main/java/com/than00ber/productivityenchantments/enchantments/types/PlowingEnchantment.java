@@ -29,13 +29,6 @@ public class PlowingEnchantment extends CarverEnchantmentBase implements IRightC
     }
 
     @Override
-    public boolean canApplyTogether(@SuppressWarnings("NullableProblems") Enchantment enchantment) {
-        if (enchantment instanceof CarverEnchantmentBase)
-            return ((CarverEnchantmentBase) enchantment).getToolType().equals(ToolType.HOE);
-        return super.canApplyTogether(enchantment);
-    }
-
-    @Override
     public boolean isBlockValid(BlockState state, World world, BlockPos pos, ItemStack stack, ToolType type) {
         Block above = world.getBlockState(pos.up()).getBlock();
         return state.isIn(Tags.Blocks.DIRT) && (above == Blocks.AIR || above instanceof TallGrassBlock || above instanceof DoublePlantBlock);

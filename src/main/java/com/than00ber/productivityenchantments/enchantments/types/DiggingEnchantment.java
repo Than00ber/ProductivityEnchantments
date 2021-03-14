@@ -28,11 +28,6 @@ public class DiggingEnchantment extends CarverEnchantmentBase {
     }
 
     @Override
-    public boolean canApplyTogether(@SuppressWarnings("NullableProblems") Enchantment enchantment) {
-        return super.canApplyTogether(enchantment) || enchantment instanceof ClusterEnchantment;
-    }
-
-    @Override
     public boolean canApply(ItemStack stack) {
         return stack.getItem() instanceof PickaxeItem || stack.getItem() instanceof ShovelItem;
     }

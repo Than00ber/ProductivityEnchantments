@@ -85,6 +85,25 @@ public class CarvedVolume {
         return this;
     }
 
+    public CarvedVolume rotate(double radians, Direction facing) {
+
+        // x = y * cos( A ) - z * sin( A )
+
+        double cos = Math.cos(radians);
+        double sin = Math.sin(radians);
+
+        Set<BlockPos> volume = new HashSet<>();
+        for (BlockPos pos : this.VOLUME) {
+            int x = pos.getX();
+            int y = (int) (pos.getY() * cos - pos.getZ() * sin);
+            int z = (int) (pos.getZ() * cos + pos.getY() * sin);
+            volume.add(new BlockPos(x, y, z));
+        }
+        this.VOLUME = volume;
+
+        return this;
+    }
+
     /**
      * Filters through implemented validation callback.
      * Make sure to call CarvedVolume#setToolRestrictions

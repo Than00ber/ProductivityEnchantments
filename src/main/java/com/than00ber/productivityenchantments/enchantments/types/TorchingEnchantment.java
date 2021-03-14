@@ -26,12 +26,7 @@ public class TorchingEnchantment extends Enchantment implements IRightClickEffec
 
     @Override
     public boolean canApply(@SuppressWarnings("NullableProblems") ItemStack stack) {
-        return super.canApply(stack)
-                || (
-                        stack.getItem() instanceof PickaxeItem ||
-                        stack.getItem() instanceof AxeItem ||
-                        stack.getItem() instanceof SwordItem
-                );
+        return stack.getItem() instanceof PickaxeItem || stack.getItem() instanceof AxeItem || stack.getItem() instanceof SwordItem;
     }
 
     @Override

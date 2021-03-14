@@ -38,13 +38,6 @@ public class FertilityEnchantment extends CarverEnchantmentBase implements IRigh
     }
 
     @Override
-    public boolean canApplyTogether(@SuppressWarnings("NullableProblems") Enchantment enchantment) {
-        if (enchantment instanceof CarverEnchantmentBase)
-            return ((CarverEnchantmentBase) enchantment).getToolType().equals(ToolType.HOE);
-        return super.canApplyTogether(enchantment);
-    }
-
-    @Override
     public boolean isBlockValid(BlockState state, World world, BlockPos pos, ItemStack stack, ToolType type) {
         return (state.getBlock() == Blocks.FARMLAND && world.getBlockState(pos.up()).getBlock() == Blocks.AIR) || state.getBlock() instanceof CropsBlock;
     }

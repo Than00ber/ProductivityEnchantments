@@ -24,15 +24,18 @@ public class CultivationEnchantment extends CarverEnchantmentBase {
     }
 
     @Override
-    public boolean canApplyTogether(@SuppressWarnings("NullableProblems") Enchantment enchantment) {
-        if (enchantment instanceof CarverEnchantmentBase)
-            return ((CarverEnchantmentBase) enchantment).getToolType().equals(ToolType.HOE);
-        return super.canApplyTogether(enchantment);
+    public boolean isBlockValid(BlockState state, World world, BlockPos pos, ItemStack stack, ToolType type) {
+        return state.getBlock() instanceof CropsBlock && state.get(CropsBlock.AGE).equals(Collections.max(CropsBlock.AGE.getAllowedValues()));
     }
 
     @Override
-    public boolean isBlockValid(BlockState state, World world, BlockPos pos, ItemStack stack, ToolType type) {
-        return state.getBlock() instanceof CropsBlock && state.get(CropsBlock.AGE).equals(Collections.max(CropsBlock.AGE.getAllowedValues()));
+    public int getMaxLevel() {
+        return 2;
+    }
+
+    @Override
+    public int getMaxEffectiveRadius(int level) {
+        return 2 + level;
     }
 
     @Override
@@ -41,8 +44,7 @@ public class CultivationEnchantment extends CarverEnchantmentBase {
 
         CarvedVolume volume = new CarvedVolume(CarvedVolume.Shape.DISC, radius, origin, world)
                 .setToolRestrictions(stack, CULTIVATION.getToolType())
-                .filterViaCallback(CULTIVATION)
-                .filterBy(world.getBlockState(origin));
+                .filterViaCallback(CULTIVATION);
 
         if (CULTIVATION_CARVE_TYPE.get().equals(Configs.CarveType.CONNECTED))
             volume.filterConnectedRecursively();

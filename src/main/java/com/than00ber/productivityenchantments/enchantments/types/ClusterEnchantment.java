@@ -6,6 +6,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.OreBlock;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.PickaxeItem;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.Tags;
@@ -27,13 +28,13 @@ public class ClusterEnchantment extends CarverEnchantmentBase {
     }
 
     @Override
-    public int getMaxEffectiveRadius(int level) {
-        return 5;
+    public boolean canApply(ItemStack stack) {
+        return stack.getItem() instanceof PickaxeItem;
     }
 
     @Override
-    public boolean canApplyTogether(@SuppressWarnings("NullableProblems") Enchantment enchantment) {
-        return super.canApplyTogether(enchantment) || enchantment instanceof DiggingEnchantment;
+    public int getMaxEffectiveRadius(int level) {
+        return 5;
     }
 
     @Override
