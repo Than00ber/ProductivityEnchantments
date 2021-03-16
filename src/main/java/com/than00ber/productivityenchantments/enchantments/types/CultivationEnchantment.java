@@ -35,7 +35,7 @@ public class CultivationEnchantment extends CarverEnchantmentBase {
 
     @Override
     public int getMaxEffectiveRadius(int level) {
-        return 2 + level;
+        return 1 + level;
     }
 
     @Override
