@@ -75,6 +75,12 @@ public class CarvedVolume {
         return new HashSet<>(v);
     }
 
+    public CarvedVolume filterByBlock(Block... blocks) {
+        List<Block> filter = Arrays.asList(blocks);
+        this.VOLUME.removeIf(pos -> !filter.contains(this.WORLD.getBlockState(pos).getBlock()));
+        return this;
+    }
+
     public CarvedVolume shiftBy(int x, int y, int z) {
 
         Set<BlockPos> newVol = new HashSet<>();

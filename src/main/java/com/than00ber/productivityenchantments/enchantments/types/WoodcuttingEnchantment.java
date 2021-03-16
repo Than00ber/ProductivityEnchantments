@@ -38,7 +38,7 @@ public class WoodcuttingEnchantment extends CarverEnchantmentBase {
                 .setToolRestrictions(stack, WOODCUTTING.getToolType())
                 .filterViaCallback(WOODCUTTING);
 
-        if (isTreeLog) volume.filterBy(state).filterConnectedRecursively(false);
+        if (isTreeLog) volume.filterByBlock(state.getBlock()).filterConnectedRecursively(false);
         else if (WOODCUTTING_CARVE_TYPE.get().equals(Configs.CarveType.CONNECTED))
             volume.filterConnectedRecursively();
 
