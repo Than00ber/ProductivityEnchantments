@@ -14,5 +14,13 @@
   "enchantment.productivityenchantments.plowing.description": "Plows an area into farmland. Max enchantment will also fully moisturize fields. The radius depends on the enchantment level.",
   "enchantment.productivityenchantments.fertility.description": "Allows seeds to be planted or bone meal to be fed on crops over an area upon right click. The radius depends on the enchantment level.",
   "enchantment.productivityenchantments.magnetism.description": "Attracts any dropped items directly to you. Your best friend for mining over lava or killing flying blazes.",
-  "enchantment.productivityenchantments.torching.description": "Places a torch down upon right click. Useful when mining."
+  "enchantment.productivityenchantments.torching.description": "Places a torch down upon right click. Useful when mining.",
+  "enchantment.productivityenchantments.woodcutting.desc": "Cuts down entire trees. This enchantment also behaves like digging on all wood-type blocks.",
+  "enchantment.productivityenchantments.cluster.desc": "Simply mines entire veins of the same ore type. Bigger veins have greater impact on durability.",
+  "enchantment.productivityenchantments.digging.desc": "Carves an area of blocks. The radius depends on the enchantment level.",
+  "enchantment.productivityenchantments.cultivation.desc": "Harvests fully grown crops in an area. The radius depends on the enchantment level. (final hoe upgrade i swear)",
+  "enchantment.productivityenchantments.plowing.desc": "Plows an area into farmland. Max enchantment will also fully moisturize fields. The radius depends on the enchantment level.",
+  "enchantment.productivityenchantments.fertility.desc": "Allows seeds to be planted or bone meal to be fed on crops over an area upon right click. The radius depends on the enchantment level.",
+  "enchantment.productivityenchantments.magnetism.desc": "Attracts any dropped items directly to you. Your best friend for mining over lava or killing flying blazes.",
+  "enchantment.productivityenchantments.torching.desc": "Places a torch down upon right click. Useful when mining."
 }
