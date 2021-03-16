@@ -26,20 +26,17 @@ public class LivingKilledHandler {
 
         if (source instanceof ServerPlayerEntity) {
             ServerPlayerEntity player = (ServerPlayerEntity) source;
+            ItemStack heldItem = player.getItemStackFromSlot(EquipmentSlotType.MAINHAND);
+            Map<Enchantment, Integer> enchantments = EnchantmentHelper.getEnchantments(heldItem);
 
-            if (!player.isCreative()) {
-                ItemStack heldItem = player.getItemStackFromSlot(EquipmentSlotType.MAINHAND);
-                Map<Enchantment, Integer> enchantments = EnchantmentHelper.getEnchantments(heldItem);
+            for (Enchantment enchantment : enchantments.keySet()) {
 
-                for (Enchantment enchantment : enchantments.keySet()) {
+                if (enchantment instanceof MagnetismEnchantment) {
+                    BlockPos pos = source.getPosition();
+                    World world = ((ServerPlayerEntity) source).getServerWorld();
 
-                    if (enchantment instanceof MagnetismEnchantment) {
-                        BlockPos pos = source.getPosition();
-                        World world = ((ServerPlayerEntity) source).getServerWorld();
-
-                        for (ItemEntity drop : event.getDrops())
-                            InventoryHelper.spawnItemStack(world, pos.getX(), pos.getY(), pos.getZ(), drop.getItem());
-                    }
+                    for (ItemEntity drop : event.getDrops())
+                        InventoryHelper.spawnItemStack(world, pos.getX(), pos.getY(), pos.getZ(), drop.getItem());
                 }
             }
         }
@@ -51,20 +48,17 @@ public class LivingKilledHandler {
 
         if (source instanceof ServerPlayerEntity) {
             ServerPlayerEntity player = (ServerPlayerEntity) source;
+            ItemStack heldItem = player.getItemStackFromSlot(EquipmentSlotType.MAINHAND);
+            Map<Enchantment, Integer> enchantments = EnchantmentHelper.getEnchantments(heldItem);
 
-            if (!player.isCreative()) {
-                ItemStack heldItem = player.getItemStackFromSlot(EquipmentSlotType.MAINHAND);
-                Map<Enchantment, Integer> enchantments = EnchantmentHelper.getEnchantments(heldItem);
+            for (Enchantment enchantment : enchantments.keySet()) {
 
-                for (Enchantment enchantment : enchantments.keySet()) {
-
-                    if (enchantment instanceof MagnetismEnchantment) {
-                        BlockPos pos = source.getPosition();
-                        World world = ((ServerPlayerEntity) source).getServerWorld();
-                        int exp = event.getDroppedExperience();
-                        world.addEntity(new ExperienceOrbEntity(world, pos.getX(), pos.getY(), pos.getZ(), exp));
-                        event.setDroppedExperience(0);
-                    }
+                if (enchantment instanceof MagnetismEnchantment) {
+                    BlockPos pos = source.getPosition();
+                    World world = ((ServerPlayerEntity) source).getServerWorld();
+                    int exp = event.getDroppedExperience();
+                    world.addEntity(new ExperienceOrbEntity(world, pos.getX(), pos.getY(), pos.getZ(), exp));
+                    event.setDroppedExperience(0);
                 }
             }
         }
