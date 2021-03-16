@@ -2,12 +2,14 @@ package com.than00ber.productivityenchantments.enchantments.types;
 
 import com.than00ber.productivityenchantments.Configs;
 import com.than00ber.productivityenchantments.enchantments.CarvedVolume;
-import com.than00ber.productivityenchantments.enchantments.CarverEnchantmentBase;
 import com.than00ber.productivityenchantments.enchantments.IRightClickEffect;
 import com.than00ber.productivityenchantments.enchantments.IValidatorCallback;
 import net.minecraft.block.*;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
@@ -19,51 +21,59 @@ import java.util.Collections;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.than00ber.productivityenchantments.Configs.PLOWING_CARVE_TYPE;
-import static com.than00ber.productivityenchantments.ProductivityEnchantments.RegistryEvents.PLOWING;
 
-public class PlowingEnchantment extends CarverEnchantmentBase implements IRightClickEffect {
+public class PlowingEnchantment extends Enchantment implements IRightClickEffect, IValidatorCallback {
 
     public PlowingEnchantment() {
-        super(Rarity.COMMON, ToolType.HOE);
+        super(Rarity.COMMON, EnchantmentType.DIGGER, new EquipmentSlotType[] { EquipmentSlotType.MAINHAND });
     }
 
     @Override
-    public boolean isBlockValid(BlockState state, World world, BlockPos pos, ItemStack stack, ToolType type) {
+    public int getMaxLevel() {
+        return 3;
+    }
+
+    @Override
+    public ToolType getToolType() {
+        return ToolType.HOE;
+    }
+
+    @Override
+    public boolean isBlockValid(BlockState state, World world, BlockPos pos, ItemStack stack, ToolType type, Direction direction) {
         boolean aboveIsAir = world.getBlockState(pos.up()).getBlock() == Blocks.AIR;
         return aboveIsAir && (state.getBlock() == Blocks.DIRT || state.getBlock() == Blocks.GRASS_BLOCK);
     }
 
     @Override
-    public ActionResultType onRightClick(ItemStack stack, int level, Direction facing, CarverEnchantmentBase enchantment, World world, BlockPos origin, PlayerEntity player) {
+    public ActionResultType onRightClick(ItemStack stack, int level, Direction facing, World world, BlockPos origin, PlayerEntity player) {
 
-        if (player instanceof ServerPlayerEntity) {
+        if (!player.isSneaking() || !player.isCrouching()) {
 
-            if (!player.isSneaking() || !player.isCrouching()) {
-                int radius = enchantment.getMaxEffectiveRadius(level);
+            IValidatorCallback callback = new IValidatorCallback() {
+                @Override
+                public boolean isBlockValid(BlockState state, World world, BlockPos pos, ItemStack stack, ToolType type, Direction direction) {
+                    Block above = world.getBlockState(pos.up()).getBlock();
+                    boolean isDirty = state.getBlock() == Blocks.DIRT || state.getBlock() == Blocks.GRASS_BLOCK;
+                    return isDirty && (above == Blocks.AIR || above instanceof TallGrassBlock || above instanceof DoublePlantBlock);
+                }
+            };
 
-                IValidatorCallback callback = new IValidatorCallback() {
-                    @Override
-                    public boolean isBlockValid(BlockState state, World world, BlockPos pos, ItemStack stack, ToolType type) {
-                        Block above = world.getBlockState(pos.up()).getBlock();
-                        boolean isDirty = state.getBlock() == Blocks.DIRT || state.getBlock() == Blocks.GRASS_BLOCK;
-                        return isDirty && (above == Blocks.AIR || above instanceof TallGrassBlock || above instanceof DoublePlantBlock);
-                    }
-                };
+            CarvedVolume area = new CarvedVolume(CarvedVolume.Shape.DISC, level + 1, origin, world)
+                    .setToolRestrictions(stack, this.getToolType())
+                    .filterViaCallback(callback);
 
-                CarvedVolume area = new CarvedVolume(CarvedVolume.Shape.DISC, radius, origin, world)
-                        .setToolRestrictions(stack, PLOWING.getToolType())
-                        .filterViaCallback(callback);
+            if (PLOWING_CARVE_TYPE.get().equals(Configs.CarveType.CONNECTED))
+                area.filterConnectedRecursively();
 
-                if (PLOWING_CARVE_TYPE.get().equals(Configs.CarveType.CONNECTED))
-                    area.filterConnectedRecursively();
+            area.sortNearestToOrigin();
 
-                area.sortNearestToOrigin();
+            BlockState state = level == this.getMaxLevel()
+                    ? Blocks.FARMLAND.getDefaultState().with(FarmlandBlock.MOISTURE, Collections.max(FarmlandBlock.MOISTURE.getAllowedValues()))
+                    : Blocks.FARMLAND.getDefaultState();
 
-                BlockState state = enchantment.getMaxLevel() == level
-                        ? Blocks.FARMLAND.getDefaultState().with(FarmlandBlock.MOISTURE, Collections.max(FarmlandBlock.MOISTURE.getAllowedValues()))
-                        : Blocks.FARMLAND.getDefaultState();
+            AtomicBoolean notBroken = new AtomicBoolean(true);
 
-                AtomicBoolean notBroken = new AtomicBoolean(true);
+            if (player instanceof ServerPlayerEntity) {
 
                 for (BlockPos blockPos : area.getVolume()) {
 
@@ -75,13 +85,10 @@ public class PlowingEnchantment extends CarverEnchantmentBase implements IRightC
                         if (above instanceof TallGrassBlock || above instanceof DoublePlantBlock)
                             world.setBlockState(blockPos.up(), Blocks.AIR.getDefaultState());
                     }
-                    else {
-                        return ActionResultType.FAIL;
-                    }
                 }
-
-                return ActionResultType.SUCCESS;
             }
+
+            return ActionResultType.SUCCESS;
         }
 
         return ActionResultType.PASS;

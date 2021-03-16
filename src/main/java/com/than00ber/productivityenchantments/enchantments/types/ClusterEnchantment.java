@@ -4,9 +4,9 @@ import com.than00ber.productivityenchantments.enchantments.CarvedVolume;
 import com.than00ber.productivityenchantments.enchantments.CarverEnchantmentBase;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.OreBlock;
-import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.PickaxeItem;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.Tags;
@@ -38,7 +38,7 @@ public class ClusterEnchantment extends CarverEnchantmentBase {
     }
 
     @Override
-    public boolean isBlockValid(BlockState state, World world, BlockPos pos, ItemStack stack, ToolType type) {
+    public boolean isBlockValid(BlockState state, World world, BlockPos pos, ItemStack stack, ToolType type, Direction direction) {
         boolean isOre = state.isIn(Tags.Blocks.ORES) || state.getBlock() instanceof OreBlock;
         return stack.canHarvestBlock(state) && isOre;
     }

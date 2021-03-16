@@ -8,6 +8,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.PickaxeItem;
 import net.minecraft.item.ShovelItem;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
@@ -30,13 +31,13 @@ public class DiggingEnchantment extends CarverEnchantmentBase {
     }
 
     @Override
-    public boolean isBlockValid(BlockState state, World world, BlockPos pos, ItemStack stack, ToolType type) {
+    public boolean isBlockValid(BlockState state, World world, BlockPos pos, ItemStack stack, ToolType type, Direction direction) {
 
         if (stack.getItem() instanceof ShovelItem) {
             return stack.canHarvestBlock(state) || state.isToolEffective(type);
         }
         else if (stack.getItem() instanceof PickaxeItem) {
-            boolean isClusterSpecific = CLUSTER.isBlockValid(state, world, pos, stack, type);
+            boolean isClusterSpecific = CLUSTER.isBlockValid(state, world, pos, stack, type, direction);
             return !isClusterSpecific && stack.canHarvestBlock(state) && state.getBlock() != Blocks.BEDROCK;
         }
 

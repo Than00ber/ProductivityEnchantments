@@ -38,8 +38,8 @@ public class ProductivityEnchantments {
         public static final CarverEnchantmentBase CLUSTER = new ClusterEnchantment();
         public static final CarverEnchantmentBase DIGGING = new DiggingEnchantment();
         public static final CarverEnchantmentBase CULTIVATION = new CultivationEnchantment();
-        public static final CarverEnchantmentBase PLOWING = new PlowingEnchantment();
-        public static final CarverEnchantmentBase FERTILITY = new FertilityEnchantment();
+        public static final Enchantment PLOWING = new PlowingEnchantment();
+        public static final Enchantment FERTILITY = new FertilityEnchantment();
         public static final MagnetismEnchantment MAGNETISM = new MagnetismEnchantment();
         public static final TorchingEnchantment TORCHING = new TorchingEnchantment();
 

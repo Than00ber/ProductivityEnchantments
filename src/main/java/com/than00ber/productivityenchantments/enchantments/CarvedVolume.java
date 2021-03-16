@@ -124,7 +124,7 @@ public class CarvedVolume {
             throw new IllegalArgumentException("Cannot perform block filtering validation without tool restrictions set.");
 
         List<BlockPos> volume = new ArrayList<>(this.VOLUME);
-        volume.removeIf(pos -> !callback.isBlockValid(this.WORLD.getBlockState(pos), this.WORLD, pos, this.TOOL_RESTRICTION_ITEM, this.TOOL_RESTRICTION_TYPE));
+        volume.removeIf(pos -> !callback.isBlockValid(this.WORLD.getBlockState(pos), this.WORLD, pos, this.TOOL_RESTRICTION_ITEM, this.TOOL_RESTRICTION_TYPE, null));
         this.VOLUME = new HashSet<>(volume);
 
         return this;

@@ -13,25 +13,25 @@ import java.util.Set;
 
 public class CarverEnchantmentBase extends Enchantment implements IValidatorCallback {
 
-    protected final ToolType TOOL_TYPE;
+    private final ToolType tooltype;
 
     protected CarverEnchantmentBase(Rarity rarity, ToolType type) {
         super(rarity, EnchantmentType.DIGGER, new EquipmentSlotType[] { EquipmentSlotType.MAINHAND });
-        this.TOOL_TYPE = type;
+        tooltype = type;
+    }
+
+    public ToolType getToolType() {
+        return tooltype;
     }
 
     @Override
     public boolean canApply(ItemStack stack) {
-        return super.canApply(stack) && stack.getToolTypes().contains(this.TOOL_TYPE);
+        return super.canApply(stack) && stack.getToolTypes().contains(tooltype);
     }
 
     @Override
     public int getMaxLevel() {
         return 3;
-    }
-
-    public ToolType getToolType() {
-        return this.TOOL_TYPE;
     }
 
     public int getMaxEffectiveRadius(int level) {

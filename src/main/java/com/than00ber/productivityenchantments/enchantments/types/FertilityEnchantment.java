@@ -1,14 +1,15 @@
 package com.than00ber.productivityenchantments.enchantments.types;
 
 import com.than00ber.productivityenchantments.enchantments.CarvedVolume;
-import com.than00ber.productivityenchantments.enchantments.CarverEnchantmentBase;
 import com.than00ber.productivityenchantments.enchantments.IRightClickEffect;
 import com.than00ber.productivityenchantments.enchantments.IValidatorCallback;
 import net.minecraft.block.*;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -29,27 +30,34 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.than00ber.productivityenchantments.Configs.GROWING_CROPS_DAMAGE_ITEM;
 import static com.than00ber.productivityenchantments.Configs.PLANTING_SEEDS_DAMAGE_ITEM;
-import static com.than00ber.productivityenchantments.ProductivityEnchantments.RegistryEvents.FERTILITY;
 
-public class FertilityEnchantment extends CarverEnchantmentBase implements IRightClickEffect {
+public class FertilityEnchantment extends Enchantment implements IRightClickEffect, IValidatorCallback {
 
     public FertilityEnchantment() {
-        super(Rarity.UNCOMMON, ToolType.HOE);
+        super(Rarity.COMMON, EnchantmentType.DIGGER, new EquipmentSlotType[] { EquipmentSlotType.MAINHAND });
     }
 
     @Override
-    public boolean isBlockValid(BlockState state, World world, BlockPos pos, ItemStack stack, ToolType type) {
+    public int getMaxLevel() {
+        return 3;
+    }
+
+    @Override
+    public ToolType getToolType() {
+        return ToolType.HOE;
+    }
+
+    @Override
+    public boolean isBlockValid(BlockState state, World world, BlockPos pos, ItemStack stack, ToolType type, Direction direction) {
         return (state.getBlock() == Blocks.FARMLAND && world.getBlockState(pos.up()).getBlock() == Blocks.AIR) || state.getBlock() instanceof CropsBlock;
     }
 
     @Override
-    public ActionResultType onRightClick(ItemStack heldItem, int level, Direction facing, CarverEnchantmentBase enchantment, World world, BlockPos origin, PlayerEntity player) {
+    public ActionResultType onRightClick(ItemStack heldItem, int level, Direction facing, World world, BlockPos origin, PlayerEntity player) {
 
-        if ((!player.isSneaking() || !player.isCrouching()) && player instanceof ServerPlayerEntity) {
+        if (!player.isSneaking() || !player.isCrouching()) {
             PlayerInventory inventory = player.inventory;
-
             boolean isInCreative = player.isCreative();
-            int radius = enchantment.getMaxEffectiveRadius(level);
 
             Block block = world.getBlockState(origin).getBlock();
             IValidatorCallback callback;
@@ -61,7 +69,7 @@ public class FertilityEnchantment extends CarverEnchantmentBase implements IRigh
 
                 callback = new IValidatorCallback() {
                     @Override
-                    public boolean isBlockValid(BlockState state, World world, BlockPos pos, ItemStack stack, ToolType type) {
+                    public boolean isBlockValid(BlockState state, World world, BlockPos pos, ItemStack stack, ToolType type, Direction direction) {
 
                         if (state.getBlock() instanceof CropsBlock) {
 
@@ -79,15 +87,15 @@ public class FertilityEnchantment extends CarverEnchantmentBase implements IRigh
 
                 callback = new IValidatorCallback() {
                     @Override
-                    public boolean isBlockValid(BlockState state, World world, BlockPos pos, ItemStack stack, ToolType type) {
+                    public boolean isBlockValid(BlockState state, World world, BlockPos pos, ItemStack stack, ToolType type, Direction direction) {
                         return state.getBlock() == Blocks.FARMLAND && world.getBlockState(pos.up()).getBlock() == Blocks.AIR;
                     }
                 };
             }
 
             if (pair != null) {
-                CarvedVolume area = new CarvedVolume(CarvedVolume.Shape.DISC, radius, origin, world)
-                        .setToolRestrictions(heldItem, FERTILITY.getToolType())
+                CarvedVolume area = new CarvedVolume(CarvedVolume.Shape.DISC, level + 1, origin, world)
+                        .setToolRestrictions(heldItem, ToolType.HOE)
                         .filterViaCallback(callback)
                         .sortNearestToOrigin();
 
@@ -97,37 +105,37 @@ public class FertilityEnchantment extends CarverEnchantmentBase implements IRigh
                 int quantityInInv = !isInCreative ? pair.getRight().getCount() : 64;
                 Item itemInInv = pair.getRight().getItem();
 
-                for (int i = 0; i < surface.size() && i < quantityInInv; i++) {
+                if (player instanceof ServerPlayerEntity) {
 
-                    if (notBroken.get()) {
-                        BlockPos pos = surface.get(i);
-                        BlockState current = world.getBlockState(pos);
+                    for (int i = 0; i < surface.size() && i < quantityInInv; i++) {
 
-                        if (!world.isRemote() && player instanceof ServerPlayerEntity) {
+                        if (notBroken.get()) {
+                            BlockPos pos = surface.get(i);
+                            BlockState current = world.getBlockState(pos);
 
-                            if (itemInInv == Items.BONE_MEAL) {
-                                if (current.getBlock() instanceof CropsBlock)
-                                    ((CropsBlock) current.getBlock()).grow(world, pos, current);
+                            if (!world.isRemote()) {
+
+                                if (itemInInv == Items.BONE_MEAL) {
+                                    if (current.getBlock() instanceof CropsBlock)
+                                        ((CropsBlock) current.getBlock()).grow(world, pos, current);
+                                }
+                                else {
+                                    Block seed = Block.getBlockFromItem(itemInInv);
+                                    world.setBlockState(pos, seed.getDefaultState());
+                                }
                             }
-                            else {
-                                Block seed = Block.getBlockFromItem(itemInInv);
-                                world.setBlockState(pos, seed.getDefaultState());
+
+                            if (!isInCreative) {
+                                inventory.decrStackSize(pair.getLeft(), 1);
+
+                                if (i % 2 == 0) {
+                                    boolean fromBoneMeal = itemInInv == Items.BONE_MEAL && GROWING_CROPS_DAMAGE_ITEM.get();
+                                    boolean fromSeed = itemInInv != Items.BONE_MEAL && PLANTING_SEEDS_DAMAGE_ITEM.get();
+
+                                    if (fromSeed || fromBoneMeal) heldItem.damageItem(1, player, p -> notBroken.set(false));
+                                }
                             }
                         }
-
-                        if (!isInCreative) {
-                            inventory.decrStackSize(pair.getLeft(), 1);
-
-                            if (i % 2 == 0) {
-                                boolean fromBoneMeal = itemInInv == Items.BONE_MEAL && GROWING_CROPS_DAMAGE_ITEM.get();
-                                boolean fromSeed = itemInInv != Items.BONE_MEAL && PLANTING_SEEDS_DAMAGE_ITEM.get();
-
-                                if (fromSeed || fromBoneMeal) heldItem.damageItem(1, player, p -> notBroken.set(false));
-                            }
-                        }
-                    }
-                    else {
-                        return ActionResultType.FAIL;
                     }
                 }
 
