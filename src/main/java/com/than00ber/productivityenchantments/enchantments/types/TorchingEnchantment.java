@@ -3,7 +3,6 @@ package com.than00ber.productivityenchantments.enchantments.types;
 import com.than00ber.productivityenchantments.enchantments.IRightClickEffect;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.TallGrassBlock;
 import net.minecraft.block.WallTorchBlock;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentType;
