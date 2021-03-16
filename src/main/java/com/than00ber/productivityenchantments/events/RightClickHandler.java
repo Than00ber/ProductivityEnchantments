@@ -26,9 +26,13 @@ public class RightClickHandler {
         Map<Enchantment, Integer> enchantments = EnchantmentHelper.getEnchantments(heldItem);
 
         ActionResultType actionResult = ActionResultType.PASS;
-        for (Enchantment enchantment : enchantments.keySet()) {
 
-            if (!actionResult.equals(ActionResultType.SUCCESS)) {
+        if (!event.getWorld().isRemote()) {
+
+            for (Enchantment enchantment : enchantments.keySet()) {
+                if (actionResult == ActionResultType.SUCCESS) break;
+
+                System.out.println(enchantments.size());
 
                 if (enchantment instanceof IRightClickEffect) {
                     IRightClickEffect iRightClickEffect = (IRightClickEffect) enchantment;
@@ -38,13 +42,11 @@ public class RightClickHandler {
                     BlockState state = world.getBlockState(pos);
                     Direction facing = event.getFace();
 
-                    if (iRightClickEffect.isBlockValid(state, world, pos, heldItem, iRightClickEffect.getToolType(), facing))
-                    actionResult = iRightClickEffect.onRightClick(heldItem, lvl, facing, world, pos, player);
+                    if (iRightClickEffect.isBlockValid(state, world, pos, heldItem, iRightClickEffect.getToolType(), facing)) {
+                        actionResult = iRightClickEffect.onRightClick(heldItem, lvl, facing, world, pos, player);
+                    }
                 }
             }
         }
-
-        if (actionResult.equals(ActionResultType.SUCCESS))
-            player.swingArm(Hand.MAIN_HAND);
     }
 }
