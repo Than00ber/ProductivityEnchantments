@@ -45,7 +45,7 @@ public class FertilityEnchantment extends CarverEnchantmentBase implements IRigh
     @Override
     public ActionResultType onRightClick(ItemStack heldItem, int level, Direction facing, CarverEnchantmentBase enchantment, World world, BlockPos origin, PlayerEntity player) {
 
-        if ((!player.isSneaking() || !player.isCrouching())) {
+        if ((!player.isSneaking() || !player.isCrouching()) && player instanceof ServerPlayerEntity) {
             PlayerInventory inventory = player.inventory;
 
             boolean isInCreative = player.isCreative();
