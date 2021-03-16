@@ -6,6 +6,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.item.ExperienceOrbEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
@@ -20,6 +21,8 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.than00ber.productivityenchantments.ProductivityEnchantments.RegistryEvents.MAGNETISM;
+import static net.minecraft.enchantment.Enchantments.FORTUNE;
+import static net.minecraft.enchantment.Enchantments.SILK_TOUCH;
 
 public class BlockBreakHandler {
 
@@ -48,6 +51,8 @@ public class BlockBreakHandler {
                         Set<BlockPos> cluster = ceb.getRemoveVolume(heldItem, lvl, ceb, world, pos);
                         AtomicBoolean notBroken = new AtomicBoolean(true);
                         boolean hasMagnetism = enchantments.get(MAGNETISM) != null;
+                        int fortuneLvl = enchantments.get(FORTUNE) != null ? enchantments.get(FORTUNE) : 1;
+                        int silkLvl = enchantments.get(SILK_TOUCH) != null ? enchantments.get(SILK_TOUCH) : 0;
 
                         for (BlockPos blockPos : cluster) {
 
@@ -55,8 +60,17 @@ public class BlockBreakHandler {
 
                                 if (!player.isCreative()) {
                                     BlockPos dropPos = hasMagnetism ? player.getPosition() : blockPos;
-                                    TileEntity te = world.getTileEntity(pos);
-                                    block.harvestBlock(world, player, dropPos, state, te, new ItemStack(block.asItem()));
+                                    TileEntity te = world.getTileEntity(blockPos);
+                                    BlockState focusState = world.getBlockState(blockPos);
+                                    Block focusBlock = focusState.getBlock();
+
+                                    focusBlock.harvestBlock(world, player, dropPos, focusState, te, new ItemStack(block.asItem()));
+                                    int qty = focusState.getExpDrop(world, blockPos, fortuneLvl, silkLvl);
+
+                                    if (qty > 0) {
+                                        ExperienceOrbEntity eoe = new ExperienceOrbEntity(world, dropPos.getX(), dropPos.getY(), dropPos.getZ(), qty);
+                                        world.addEntity(eoe);
+                                    }
                                 }
 
                                 hasPerformedCarvingAction = true;
