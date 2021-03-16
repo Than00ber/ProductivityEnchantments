@@ -3,16 +3,13 @@ package com.than00ber.productivityenchantments.enchantments.types;
 import com.than00ber.productivityenchantments.Configs;
 import com.than00ber.productivityenchantments.enchantments.CarvedVolume;
 import com.than00ber.productivityenchantments.enchantments.CarverEnchantmentBase;
-import com.than00ber.productivityenchantments.enchantments.IValidatorCallback;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.OreBlock;
-import net.minecraft.enchantment.Enchantment;
+import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.PickaxeItem;
 import net.minecraft.item.ShovelItem;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.ToolType;
 
 import java.util.Set;
@@ -34,35 +31,27 @@ public class DiggingEnchantment extends CarverEnchantmentBase {
 
     @Override
     public boolean isBlockValid(BlockState state, World world, BlockPos pos, ItemStack stack, ToolType type) {
-        boolean harvestable = state.isToolEffective(type) || stack.canHarvestBlock(state);
 
-        if (stack.getItem() instanceof PickaxeItem) {
+        if (stack.getItem() instanceof ShovelItem) {
+            return stack.canHarvestBlock(state) || state.isToolEffective(type);
+        }
+        else if (stack.getItem() instanceof PickaxeItem) {
             boolean isClusterSpecific = CLUSTER.isBlockValid(state, world, pos, stack, type);
-            return !isClusterSpecific && harvestable;
+            return !isClusterSpecific && stack.canHarvestBlock(state) && state.getBlock() != Blocks.BEDROCK;
         }
 
-        return stack.getItem() instanceof ShovelItem && harvestable;
+        return false;
     }
 
     @Override
     public Set<BlockPos> getRemoveVolume(ItemStack stack, int level, CarverEnchantmentBase enchantment, World world, BlockPos origin) {
         int radius = enchantment.getMaxEffectiveRadius(level);
-        IValidatorCallback callback = DIGGING;
-
-        if (stack.getItem() instanceof PickaxeItem) {
-            callback = new IValidatorCallback() {
-                @Override
-                public boolean isBlockValid(BlockState state, World world, BlockPos pos, ItemStack stack, ToolType type) {
-                    return !(state.isIn(Tags.Blocks.ORES) || state.getBlock() instanceof OreBlock);
-                }
-            };
-        }
 
         CarvedVolume area = new CarvedVolume(CarvedVolume.Shape.SPHERICAL, radius, origin, world)
                 .setToolRestrictions(stack, enchantment.getToolType())
-                .filterViaCallback(callback);
+                .filterViaCallback(DIGGING);
 
-        if (DIGGING_CARVE_TYPE.get().equals(Configs.CarveType.CONNECTED))
+        if (!DIGGING_CARVE_TYPE.get().equals(Configs.CarveType.CONNECTED))
             area.filterConnectedRecursively();
 
         return area.sortNearestToOrigin().getVolume();
