@@ -1,7 +1,10 @@
 package com.than00ber.productivityenchantments.enchantments.types;
 
 import com.than00ber.productivityenchantments.enchantments.IRightClickEffect;
-import net.minecraft.block.*;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.TallGrassBlock;
+import net.minecraft.block.WallTorchBlock;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -31,8 +34,15 @@ public class TorchingEnchantment extends Enchantment implements IRightClickEffec
 
     @Override
     public boolean isBlockValid(BlockState state, World world, BlockPos pos, ItemStack stack, ToolType type, Direction direction) {
-        Block block = world.getBlockState(pos.offset(direction)).getBlock();
-        return block == Blocks.AIR || (block instanceof TallGrassBlock || block instanceof DoublePlantBlock);
+        BlockPos facingPos = pos.offset(direction);
+        BlockState facingState = world.getBlockState(facingPos);
+        boolean isOriginGrassy = isValidPlantTarget(state, world, pos);
+        boolean isTargetGrassy = isValidPlantTarget(facingState, world, pos.offset(direction));
+        return world.isAirBlock(facingPos) || isTargetGrassy || isOriginGrassy;
+    }
+
+    private static boolean isValidPlantTarget(BlockState state, World world, BlockPos pos) {
+        return state.getBlock() == Blocks.GRASS && world.getBlockState(pos.down()).isSolid();
     }
 
     @Override
@@ -40,25 +50,23 @@ public class TorchingEnchantment extends Enchantment implements IRightClickEffec
         PlayerInventory inventory = player.inventory;
 
         if (inventory.hasItemStack(new ItemStack(Items.TORCH)) || player.isCreative()) {
-            BlockPos current = origin.offset(facing);
             boolean upDown = facing.equals(Direction.UP) || facing.equals(Direction.DOWN);
-            BlockState state = world.getBlockState(current);
+            BlockPos facingPos = origin.offset(facing);
+            BlockState targetState = world.getBlockState(origin);
             BlockState torch = null;
 
-            if (Blocks.TORCH.isValidPosition(state, world, current) && upDown) {
+            if (Blocks.TORCH.isValidPosition(targetState, world, facingPos) && upDown) {
                 torch = Blocks.TORCH.getDefaultState();
             }
             else if (!upDown) {
                 BlockState wallTorch = Blocks.WALL_TORCH.getDefaultState().with(WallTorchBlock.HORIZONTAL_FACING, facing);
-
-                if (Blocks.WALL_TORCH.isValidPosition(wallTorch, world, current))
-                    torch = wallTorch;
+                if (Blocks.WALL_TORCH.isValidPosition(wallTorch, world, facingPos)) torch = wallTorch;
             }
 
             if (torch != null) {
 
                 if (player instanceof ServerPlayerEntity) {
-                    world.setBlockState(current, torch);
+                    world.setBlockState(facingPos, torch);
 
                     if (!player.isCreative()) {
                         int inSlot = inventory.getSlotFor(new ItemStack(Items.TORCH));
