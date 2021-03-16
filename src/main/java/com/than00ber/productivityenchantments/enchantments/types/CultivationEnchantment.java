@@ -5,6 +5,7 @@ import com.than00ber.productivityenchantments.enchantments.CarvedVolume;
 import com.than00ber.productivityenchantments.enchantments.CarverEnchantmentBase;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.CropsBlock;
+import net.minecraft.item.HoeItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -21,6 +22,11 @@ public class CultivationEnchantment extends CarverEnchantmentBase {
 
     public CultivationEnchantment() {
         super(Rarity.COMMON, ToolType.HOE);
+    }
+
+    @Override
+    public boolean canApply(ItemStack stack) {
+        return stack.getItem() instanceof HoeItem;
     }
 
     @Override
