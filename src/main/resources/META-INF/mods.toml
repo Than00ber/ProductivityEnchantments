@@ -1,7 +1,7 @@
 modLoader="javafml" #mandatory
 loaderVersion="[35,)" #mandatory This is typically bumped every Minecraft version by Forge. See our download page for lists of versions.
 
-license="All rights reserved"
+license="MIT License"
 issueTrackerURL="https://github.com/Than00ber/ProductivityEnchantments/issues" #optional
 
 [[mods]] #mandatory
