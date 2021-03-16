@@ -21,6 +21,11 @@ public class CarverEnchantmentBase extends Enchantment implements IValidatorCall
     }
 
     @Override
+    public boolean canApply(ItemStack stack) {
+        return super.canApply(stack) && stack.getToolTypes().contains(this.TOOL_TYPE);
+    }
+
+    @Override
     public int getMaxLevel() {
         return 3;
     }
