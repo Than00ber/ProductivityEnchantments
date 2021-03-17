@@ -18,7 +18,7 @@ public interface IValidatorCallback {
     }
 
     /**
-     * Used statically to apply default block validation.
+     * Used statically to perform default block validation.
      * Overriding IValidatorCallback#isBlockValid will remove this
      * default check but can still be applied when called.
      *
