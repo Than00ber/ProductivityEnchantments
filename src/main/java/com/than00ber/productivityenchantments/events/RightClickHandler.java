@@ -32,8 +32,6 @@ public class RightClickHandler {
             for (Enchantment enchantment : enchantments.keySet()) {
                 if (actionResult == ActionResultType.SUCCESS) break;
 
-                System.out.println(enchantments.size());
-
                 if (enchantment instanceof IRightClickEffect) {
                     IRightClickEffect iRightClickEffect = (IRightClickEffect) enchantment;
                     int lvl = enchantments.get(enchantment);
